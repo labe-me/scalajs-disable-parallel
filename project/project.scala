@@ -21,6 +21,10 @@ object MyBuild extends Build {
   )
 
   lazy val jsSettings = Seq(
+    // scalaJSOptimizerOptions in (Compile, fullOptJS) ~= { _.withParallel(false) }
+    scalaJSOptimizerOptions ~= { _.withParallel(false) },
+    parallelExecution in fullOptJS := false
+    // parallelExecution in fullOptJS in Compile := false
   )
 
   lazy val jsOne = Project(id="jsOne", base=file("js/one")).
@@ -35,9 +39,10 @@ object MyBuild extends Build {
 
   lazy val js = Project(id = "js", base = file("js")).
     settings(commonSettings: _*).
-    aggregate(jsShared, jsFinder, jsManager, jsCast, jsUser, jsUiTest)
+    aggregate(jsOne, jsTwo)
+    // .    settings(jsSettings: _*)
 
   lazy val root: Project = Project(id = "root", base = file(".")).
     settings(commonSettings: _*).
-    aggregate(js)
+    aggregate(js)//.settings(jsSettings: _*)
 }
